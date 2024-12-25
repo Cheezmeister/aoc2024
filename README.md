@@ -4,10 +4,10 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/aoc202derp/)
 
 ```sh
-gleam add aoc202derp@1
+gleam add aoc2024@1
 ```
 ```gleam
-import aoc202derp
+import aoc2024
 
 pub fn main() {
   // TODO: An example of the project in use

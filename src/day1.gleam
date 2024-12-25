@@ -1,29 +1,62 @@
+import gleam/int
 import gleam/io
-import gleam/string
 import gleam/list
+import gleam/string
+import simplifile
 
-const input = "4 2
-3 7
-5 1"
-
+fn read_input(day: Int) -> String {
+  let filename = "input." <> int.to_string(day) <> ".txt"
+  case simplifile.read(filename) {
+    Ok(content) -> content
+    Error(_) -> {
+      io.print_error("Could not read input file: " <> filename)
+      panic
+    }
+  }
+}
 
 pub fn main() {
+  let input = read_input(1)
   let inlist = string.split(input, "\n")
-  
-  let lol = list.map(inlist, fn(i) { string.split(i, " ") } )
+  // io.println("inlist is: ")
+  // io.println(string.join(inlist, "//"))
+
+  let lol = list.map(inlist, fn(i) { string.split(i, " ") })
+
+  let lnr = list.transpose(lol)
+
+  let sorted = list.map(lnr, fn(l) { list.sort(l, by: string.compare) })
+  let pairs: List(List(String)) = list.transpose(sorted)
+  let safepairs: List(List(Int)) =
+    list.map(pairs, fn(i) {
+      list.map(i, fn(a) {
+        case int.parse(a) {
+          Ok(num) -> num
+          Error(_) -> 0
+        }
+      })
+    })
+
+  // io.println("pairs is:")
+  // io.println(string.join(list.map(pairs, fn(i) { string.join(i, ";") }), " "))
+
+  let distance: List(Int) =
+    list.map(safepairs, fn(i: List(Int)) {
+      case list.reduce(i, with: fn(a, b) { a - b }) {
+        Ok(num) -> num
+        Error(_) -> 0
+      }
+    })
+
+  // let things = list.map(distance, fn(i) { int.to_string(i) })
+  // io.println(string.join(things, " / "))
 
   io.println("Solution is:")
-  
-  let lnr = list.transpose(lol)
-  let sorted = list.map(lnr, fn(l) { list.sort(l, by: string.compare) })
-  let pairs: List(List(String)) =  list.transpose(sorted)
-  let distance = list.map(pairs, fn(i: List(String)) { 
-    let j = list.map(i, fn(a) { 0 + parseInt(a) })
-    list.reduce(j, with: fn(a,b){Int(a)-Int(b)}) 
+  io.println(case list.reduce(distance, with: fn(a, b) { a + b }) {
+    Ok(num) -> int.to_string(num)
+    Error(_) -> "error"
   })
-
-  io.println(string.join( list.map(distance, fn(l) { string.join(l, ",") } ), " / "))
   // 👆️ Uncomment this line
-  
-// why not 
+
+  // why not 
 }
